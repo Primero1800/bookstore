@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AUTHOR DETAIL</title>
+</head>
+<body>
+    <a href="{% url 'books:book_list' %}">LIST OF BOOKS</a><br>
+    <a href="{% url 'books:author_list' %}">LIST OF AUTHORS</a><br>
+    <br><br>
+
+    <h2>{{ author.name }}  {{ author.surname }}</h2>
+
+    <small>{{ author.born|date:'d.m.Y' }}{% if not author.is_alive %} - {{ author.died|date:'d.m.Y' }}  {% endif %}  ({{ author.ages }})</small>
+    <br><br>
+    {% for book in author.books %}
+        <a href="{% url 'books:book_detail' book.slug %}">
+            {{ book.title }}<br>
+        </a>
+    {% endfor %}
+
+
+
+</body>
+</html>

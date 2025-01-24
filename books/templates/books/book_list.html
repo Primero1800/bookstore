@@ -1,0 +1,33 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BOOK LIST</title>
+</head>
+
+<body>
+    <a href="{% url 'books:book_list' %}">LIST OF BOOKS</a><br>
+    <a href="{% url 'books:author_list' %}">LIST OF AUTHORS</a>
+    <br><br>
+    
+    {% for book in books %}
+    <a href="{% url 'books:book_detail' book.slug %}">
+       <b>{{ forloop.counter }}. {{ book.title }}</b>
+   </a>
+        <br>
+            {% for author in book.authors %}
+                <a href="{% url 'books:author_detail' author.slug %}">
+                    <small><i>{{ author.name }} {{ author.surname }}</i></small><br>
+                </a>
+            {% endfor %}
+        {{ book.status_display }}
+
+        <br><br>
+    {% endfor %}
+
+
+</body>
+</html>
