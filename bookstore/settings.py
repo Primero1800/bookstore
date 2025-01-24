@@ -35,6 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_celery_results',
+    'django_celery_beat',
+
+    'rest_framework',
+    'corsheaders',
 
     'books.apps.BooksConfig',
 ]
@@ -42,6 +46,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -66,6 +72,10 @@ TEMPLATES = [
         },
     },
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api /.*$'
+
 
 WSGI_APPLICATION = 'bookstore.wsgi.application'
 
@@ -133,19 +143,21 @@ SHORT_DATETIME_FORMAT = 'd.m.Y H:i:s'
 # Celery
 
 # CELERY = {
-#     'broker_url': config(
-#         'CELERY_BROKER_URL',
-#         default='amqp://guest:guest@rabbitmq:5672/',
-#         cast=str,
-#     ),
+#     # 'broker_url': config(
+#     #     'CELERY_BROKER_URL',
+#     #     default='amqp://guest:guest@rabbitmq:5672/',
+#     #     cast=str,
+#     # ),
 #     #'task_always_eager': settings.TESTING,
 #     'task_always_eager': False,
 #     'worker_hijack_root_logger': False,
 #     'timezone': TIME_ZONE,
+#     # 'beat_scheduler': 'django_celery_beat.schedulers:DatabaseScheduler',
 # }
 
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # CELERY_RESULT_BACKEND = 'rpc://'
 
 # Static files (CSS, JavaScript, Images)

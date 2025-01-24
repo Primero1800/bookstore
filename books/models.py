@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import django_celery_beat
 from django.db import models
 
 class Author(models.Model):
@@ -79,4 +80,26 @@ class Book(models.Model):
             'status_display': self.get_choice_description(),
             'is_available': self.is_available(),
         }
+
+class AuthorAdsSettings(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name='Author')
+    url = models.URLField(verbose_name='url')
+    settings = models.JSONField(verbose_name='settings', )
+    crontab = models.ForeignKey(
+        'django_celery_beat.CrontabSchedule',
+        on_delete=models.CASCADE,
+        verbose_name='schedule',
+        null=True,
+        blank=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='created date')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='updated date')
+
+    class Meta:
+        verbose_name = "Adjusting author entertainment"
+        verbose_name_plural = 'Adjusting authors entertainment'
+        ordering = ('-id',)
+
+    def __str__(self):
+        return f"AddsSets {self.author.name} {self.author.surname} ({self.author.id}) url: {self.url}"
 

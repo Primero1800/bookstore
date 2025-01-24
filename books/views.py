@@ -1,14 +1,18 @@
 import time
 from random import randint, choice
 
+
 from celery import shared_task
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
+from rest_framework.viewsets import ModelViewSet
 
-from books.models import Book, Author
+from books.filters import AuthorAdsSettingsFilterSet
+from books.models import Book, Author, AuthorAdsSettings
 from django.core.serializers import serialize
 
+from books.serializers import AuthorAdsSettingsSerializer
 from bookstore.telegram_bot import send_message_to_bot
 
 
@@ -47,14 +51,10 @@ def clicked(x: int):
     send_message_to_bot(instance=f'BOOKSTORE {x} - {rand_object}')
 
 
-
-
-
-
-
-
-
-
-
-
+class APIAuthorAdsSettingViewSet(ModelViewSet):
+    queryset = AuthorAdsSettings.objects.all()
+    serializer_class = AuthorAdsSettingsSerializer
+    filterset_class = AuthorAdsSettingsFilterSet
+    search_fields = ('url', )
+    ordering_fields = '__all__'
 

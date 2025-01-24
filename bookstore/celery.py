@@ -8,6 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bookstore.settings')
 app = Celery('bookstore')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
+
 #app.config_from_object(settings.CELERY)
 
 app.conf.broker_connection_always_reconnect = True

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from books.models import Book, Author
+from books.models import Book, Author, AuthorAdsSettings
 
 
 class BookInline(admin.StackedInline):
@@ -29,3 +29,5 @@ class BookAdmin(admin.ModelAdmin):
 
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
+
+admin.site.register(AuthorAdsSettings)
