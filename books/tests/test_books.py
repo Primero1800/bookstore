@@ -5,6 +5,7 @@ from datetime import datetime, date
 import pytest
 from django.urls import reverse
 
+from books.service import create_author_ads_settings
 from conftest import admin_api_client, models
 
 URLS = [
@@ -49,7 +50,6 @@ def test_author_ads_settings(admin_api_client, models, author, entered, expected
     assert len(authors) == 1
 
     url = reverse('books:authoradssettings-list')
-    Author = models['Author']
 
     data = {
         'author': Author.objects.last().id,
@@ -59,17 +59,45 @@ def test_author_ads_settings(admin_api_client, models, author, entered, expected
         }),
     }
     response = admin_api_client.post(url, data)
+
     assert response.status_code == expected
 
     AuthorAdsSettings = models['AuthorAdsSettings']
+    PeriodicTask = models['PeriodicTask']
+
+    assert len(AuthorAdsSettings.objects.all()) == 1
+    assert len(PeriodicTask.objects.all()) == 1
+
     data = AuthorAdsSettings.objects.last().id
     url = reverse('books:authoradssettings-detail', args=(data,))
     response = admin_api_client.delete(url)
+
     assert response.status_code == 204
+    assert len(AuthorAdsSettings.objects.all()) == 0
+    assert len(PeriodicTask.objects.all()) == 0
 
-    aas = AuthorAdsSettings.objects.all()
-    assert len(aas) == 0
 
+@pytest.mark.parametrize(
+    ('entered', 'expected'),
+    list(
+        zip(
+            itertools.cycle(URLS), [201 for _ in range(TESTS_COUNT)]
+        )
+    )
+)
+@pytest.mark.django_db
+def test_create_author_ads_settings(admin_api_client, models, author, entered, expected):
+    Author = models['Author']
+    data = {
+        'author': Author.objects.last(),
+        'url': entered,
+        'settings': {
+            "crontab": "* * * * *",
+        },
+    }
+    d = 2
+    settings = create_author_ads_settings(data)
+    d = 2
 
 
 # @pytest.mark.parametrize(
