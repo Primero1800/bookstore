@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 
+    'pytest_django',
+
     'books.apps.BooksConfig',
 ]
 
@@ -73,6 +75,19 @@ TEMPLATES = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api /.*$'
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#     ],
+#
+#     # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+#     # "DEFAULT_VERSION": 'v1',
+#     # 'ALLOWED_VERSIONS': ('v1', ),
+#
+#     # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+# }
 
 
 WSGI_APPLICATION = 'bookstore.wsgi.application'
