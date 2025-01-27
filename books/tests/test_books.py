@@ -104,30 +104,26 @@ def test_create_author_ads_settings(admin_api_client, models, author, entered, e
 
 
 @pytest.mark.parametrize(
-    ('entered', 'crontab', 'status'),
+    ('crontab', 'status'),
     list(
         zip(
-            itertools.cycle(URLS), ["* *", "*****", "*  **  * *", "*  *   *   *  *", "* * * * *"], [True, True, True, True, False],
+            ["* *", "*****", "*  **  * *", "*  *   *   *  *", "* * * * *"],
+            [True, True, True, True, False],
         )
     )
 )
 @pytest.mark.django_db
-def test_create_author_ads_settings_bad_crontab(admin_api_client, models, author, entered, crontab, status):
+def test_create_author_ads_settings_bad_crontab(admin_api_client, models, author, crontab, status):
     Author = models['Author']
     data = {
         'author': Author.objects.last(),
-        'url': entered,
+        'url': URLS[0],
         'settings': {
             "crontab": crontab,
         },
     }
-    d = 2
     settings = create_author_ads_settings(data)
     assert (settings is None) == status
-    d = 2
-
-
-
 
 
 # @pytest.mark.parametrize(
