@@ -1,11 +1,7 @@
-import time
-from random import randint, choice
-
-
-from celery import shared_task
-from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView
+from rest_framework import status
+from rest_framework.response import Response
+
 from rest_framework.viewsets import ModelViewSet
 
 from books.filters import AuthorAdsSettingsFilterSet
@@ -13,7 +9,8 @@ from books.models import Book, Author, AuthorAdsSettings
 from django.core.serializers import serialize
 
 from books.serializers import AuthorAdsSettingsSerializer
-from bookstore.telegram_bot import send_message_to_bot
+from books.service import create_author_ads_settings
+from books.tasks import clicked
 
 
 def book_list(request):
@@ -34,21 +31,10 @@ def author_list(request):
 def author_detail(request, slug):
     author = get_object_or_404(Author, slug=slug)
 
-    clicked.delay(2)
+    #clicked.delay(2)
 
     return render(request, 'books/author_detail.html', context={'author': author.to_dict()})
 
-
-@shared_task
-def clicked(x: int):
-    time.sleep(15)
-    rand_base = randint(0, 1)
-    if rand_base == 0:
-        base = Author.objects.all()
-    else:
-        base = Book.objects.all()
-    rand_object = choice(base)
-    send_message_to_bot(instance=f'BOOKSTORE {x} - {rand_object}')
 
 
 class APIAuthorAdsSettingViewSet(ModelViewSet):
@@ -57,4 +43,13 @@ class APIAuthorAdsSettingViewSet(ModelViewSet):
     filterset_class = AuthorAdsSettingsFilterSet
     search_fields = ('url', )
     ordering_fields = '__all__'
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception = True)
+
+        settings = create_author_ads_settings(serializer.validated_data)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(AuthorAdsSettingsSerializer(settings).data, status=status.HTTP_201_CREATED, headers=headers)
 

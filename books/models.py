@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import django_celery_beat
 from django.db import models
 
+
 class Author(models.Model):
     name = models.CharField(max_length=70, verbose_name='Name')
     surname = models.CharField(max_length=70, verbose_name='Surname')
@@ -102,4 +103,3 @@ class AuthorAdsSettings(models.Model):
 
     def __str__(self):
         return f"AddsSets {self.author.name} {self.author.surname} ({self.author.id}) url: {self.url}"
-
