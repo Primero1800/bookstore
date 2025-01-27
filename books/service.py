@@ -7,12 +7,17 @@ from books.models import AuthorAdsSettings
 from books.serializers import AuthorAdsSettingsSerializer
 
 
-def create_author_ads_settings(validated_data: dict[str, Any]) -> AuthorAdsSettings:
+def create_author_ads_settings(validated_data: dict[str, Any]) -> AuthorAdsSettings | None:
     """Создание нового экземпляра AuthorAdsSettings (настроек рекламы пользователя)
     В том числе создаются задания для Celery
     """
     settings = AuthorAdsSettings.objects.create(**validated_data)
-    minute, hour, day_of_week, day_of_month, month_of_year = settings.settings['crontab'].split(' ')
+
+    try:
+        minute, hour, day_of_week, day_of_month, month_of_year = settings.settings['crontab'].split(' ')
+    except ValueError:
+        return None
+
     crontab_schedule, _ = CrontabSchedule.objects.get_or_create(
         minute=minute,
         hour=hour,
