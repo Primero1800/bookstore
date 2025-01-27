@@ -53,3 +53,10 @@ class APIAuthorAdsSettingViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(AuthorAdsSettingsSerializer(settings).data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def perform_destroy(self, instance):
+        try:
+            instance.crontab.delete()
+        except AttributeError:
+            pass
+        instance.delete()
+

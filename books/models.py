@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import django_celery_beat
 from django.db import models
 
 
@@ -86,10 +85,17 @@ class AuthorAdsSettings(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name='Author')
     url = models.URLField(verbose_name='url')
     settings = models.JSONField(verbose_name='settings', )
+    # crontab = models.ForeignKey(
+    #     'django_celery_beat.CrontabSchedule',
+    #     on_delete=models.CASCADE,
+    #     verbose_name='schedule',
+    #     null=True,
+    #     blank=True,
+    # )
     crontab = models.ForeignKey(
-        'django_celery_beat.CrontabSchedule',
+        'django_celery_beat.PeriodicTask',
         on_delete=models.CASCADE,
-        verbose_name='schedule',
+        verbose_name='task',
         null=True,
         blank=True,
     )
@@ -102,4 +108,4 @@ class AuthorAdsSettings(models.Model):
         ordering = ('-id',)
 
     def __str__(self):
-        return f"AddsSets {self.author.name} {self.author.surname} ({self.author.id}) url: {self.url}"
+        return f"AddsSets (id: {self.pk}) {self.author.name} {self.author.surname} ({self.author.id}) url: {self.url}"

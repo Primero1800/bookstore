@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
@@ -24,13 +25,10 @@ def create_author_ads_settings(validated_data: dict[str, Any]) -> AuthorAdsSetti
         crontab=crontab_schedule,
         name=f"Author Ads Settings {settings.id}",
         task='books.tasks.clicked',
-        args=[str(settings.author), str(settings.url)],
+        args=json.dumps([str(settings.author), settings.url]),
     )
 
-    return settings
+    settings.crontab = periodic_task
+    settings.save()
 
-    # serializer = AuthorAdsSettingsSerializer(data=request.data)
-    # serializer.is_valid(raise_exception=True)
-    # serializer.save()
-    # headers = get_success_headers(serializer.data)
-    # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    return settings
